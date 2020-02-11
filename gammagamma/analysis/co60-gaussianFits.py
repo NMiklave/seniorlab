@@ -45,6 +45,7 @@ def main():
     plt.title("$^{60}$Co Coincidence Rate v. Detector Angle")
     plt.xlabel("Angle $(^\circ)$")
     plt.ylabel("Rate (counts/sec)")
+    plt.savefig("../plots/co60.eps", format='eps')
     plt.show()
     return
 
