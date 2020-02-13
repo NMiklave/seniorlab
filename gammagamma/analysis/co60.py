@@ -26,14 +26,13 @@ def getData(theta):
     bins = np.arange(len(data))
     data = np.column_stack([bins, data])
 
-   # plt.plot(*data[200:400].T)
-
     fit = gaussFit(*data[200:400].T)
-
     integral = quad(gaussian, fit[1]-3*fit[2], fit[1]+3*fit[2], args=(fit[0], fit[1], fit[2], fit[3]))[0]
-   # plt.axvline(x=fit[1]-3*fit[2])
-   # plt.axvline(x=fit[1]+3*fit[2])
-   # plt.show()
+
+    #plt.plot(*data[200:400].T)
+    #plt.axvline(x=fit[1]-3*fit[2])
+    #plt.axvline(x=fit[1]+3*fit[2])
+    #plt.show()
 
     sum_noBG = sum(data[100:400].T[1]) - fit[3]*201
 
@@ -53,9 +52,10 @@ def legendre(x, a0, a1, a2, a3, a4):
 
 
 def fit_legendre(x, y, yerr):
-    params, covar = curve_fit(legendre, x, y, sigma=yerr)
-    range = np.linspace(x[0], x[-1], 200)
-    plt.plot(range, legendre(range, *params),
+    inits = [1, 0, 0, 0, 0]
+    params, covar = curve_fit(legendre, x, y, sigma=yerr, p0=inits)
+    domain = np.linspace(x[0], x[-1], 200)
+    plt.plot(domain, legendre(domain, *params),
              label='a0={0:2.4f}\na1={1:2.4f}\na2={0:2.4f}\na3={1:2.4f}\na4={2:2.4f}'.format(*params))
     return
 
@@ -68,14 +68,20 @@ def main():
     for angle in angles:
         counts = np.append(counts, getData(angle))
 
-    plt.errorbar(angles, counts/times, yerr=np.sqrt(counts)/times, fmt='k.', ecolor='g', capsize=3, capthick=1)
-    fit_legendre(angles, counts/times, np.sqrt(counts)/times)
+    rates = counts/times
+    sig_rates = np.sqrt(counts)/times
+    normed_rates = rates/rates[9]
+    sig_normed_rates = [normed_rates[i]*np.sqrt((sig_rates[i]/rates[i])**2+(sig_rates[9]/rates[9])**2)
+                        for i in range(len(rates))]
+
+    plt.errorbar(angles, normed_rates, yerr=sig_normed_rates, fmt='k.', ecolor='g', capsize=3, capthick=1)
+    fit_legendre(angles, normed_rates, sig_normed_rates)
     plt.title("$^{60}$Co Coincidence Rate v. Detector Angle")
     plt.xlabel("Angle $(^\circ)$")
     plt.ylabel("Rate (counts/sec)")
     plt.legend()
-    plt.savefig('../plots/co60.eps', format='eps')
-
+    #plt.savefig('../plots/co60.eps', format='eps')
+    plt.show()
     return
 
 
