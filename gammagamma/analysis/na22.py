@@ -2,6 +2,7 @@ import math
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 #Fix title text to match TeX
 mpl.rcParams['mathtext.fontset'] = 'stix'
@@ -31,9 +32,15 @@ def plot(angle, rate, error):
   plt.show()
   return
 
+def printData(time, count, rate, sig):
+  df = pd.DataFrame(np.array([time, count, rate, sig]).T, columns=['Time', 'Counts', 'Rate', 'SigRate'])
+  print(df.to_latex())
+  return
+
 def main():
   angles = [0,5,10,15,20,30,45,60,75,90]
   liveTimes = [301.36,304.98,305.54,300.78,303.20,305.42,302.12,310.26,302.30,204.48]
+  means = []
   rates = []
   errors = []
   index = 0
@@ -41,9 +48,12 @@ def main():
     fname = "../data/Na22_DetC_" + str(angle).zfill(2) + ".txt"
     mean, stddev = getDataPoint(fname)
     time = liveTimes[index]
+    means.append(mean)
     rates.append(mean/time)
     errors.append(stddev/time)
     index += 1
-  plot(angles, rates, errors)
+#  plot(angles, rates, errors)
+#  printData(liveTimes, means, rates, errors)
+
 
 main()
