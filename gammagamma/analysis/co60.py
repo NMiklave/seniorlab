@@ -52,9 +52,9 @@ def legendre(x, a0, a1, a2, a3, a4):        # Legendre polynomial fit
 
 def fit_legendre(x, y, yerr):               # Find the polynomial fit parameters and plot them
     inits = [1, 0, 0.1, 0, 0.009]
-    params, covar = curve_fit(legendre, np.cos(np.pi * x/180), y, sigma=yerr, p0=inits)     # Legendre actually is cos(x)
-    domain = np.linspace(0, 140, 200)                                           # Range for plotting
-    plt.plot(domain, legendre(np.cos(np.pi * domain/180), *params), 'r--',                  # Plot fit over range
+    params, covar = curve_fit(legendre, np.cos(np.pi*x/180), y, sigma=yerr, p0=inits)   # Legendre actually is cos(x)
+    domain = np.linspace(0, 140, 200)                                                   # Range for plotting
+    plt.plot(domain, legendre(np.cos(np.pi*domain/180), *params), 'r--',                # Plot fit over range
              label='a0={0:2.4f}\na1={1:2.4f}\na2={0:2.4f}\na3={1:2.4f}\na4={2:2.4f}'.format(*params))
     return
 
