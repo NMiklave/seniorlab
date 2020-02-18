@@ -9,36 +9,19 @@ mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['font.family'] = 'STIXGeneral'
 
 
-def gaussian(x, a, m, s, o):    # Gaussian to fit to
-    gauss = a*np.exp(-.5*((x-m)/s)**2)+o
-    return gauss
-
-
-def gaussFit(x, y):             # Fit the gaussian and return parameters
-    inits = [max(y), 350, 10, np.mean(y)]
-    params, covar = curve_fit(gaussian, x, y, p0=inits)
-    return params
-
-
 def getData(theta):             # Load data from file, using the angle tag in file name. Returns integrated counts
-    fname = '../data/Co60_DetC_{0}_2.Spe'.format(str(theta).zfill(3))
+    fname = '../data/Co60_DetC_{0}_4.Spe'.format(str(theta).zfill(3))
     data = np.loadtxt(fname, skiprows=12, max_rows=2047)
     bins = np.arange(len(data))
     data = np.column_stack([bins, data])
 
-    fit = gaussFit(*data[200:400].T)
-    integral = quad(gaussian, fit[1]-3*fit[2], fit[1]+3*fit[2], args=(fit[0], fit[1], fit[2], fit[3]))[0]
+    bg = sum(data.T[1])/len(bins)
 
-    #plt.plot(*data[200:400].T)                 # If you want to view the gaussian fits
-    #plt.plot(*data.T[0], )
-    #plt.show()
+    plt.plot(*data[200:800].T)                 # If you want to view the gaussian fits
+    plt.axhline(y=bg, c='r')
+    plt.show()
 
-    sum_noBG = sum(data[100:400].T[1]) - fit[3]*201
-
-    print('Angle: ', theta)
-    print(integral, sum_noBG)
-    print('Delta: ', integral-sum_noBG)
-    return integral
+    return sum(data.T[1])
 
 
 def legendre(x, a0, a1, a2, a3, a4):        # Legendre polynomial fit
@@ -61,12 +44,11 @@ def fit_legendre(x, y, yerr):               # Find the polynomial fit parameters
 
 def main():
     angles = np.arange(0, 140, 10)
-    times = np.array([258.40, 239.66, 214.96, 206.40, 207.62, 201.98, 204.20,
-                      205.92, 210.76, 202.50, 217.48, 213.40, 203.26, 213.74])
+    times = np.array([660.16, 634.00, 607.32, 608.84, 614.70, 647.02, 616.00,
+                      708.92, 642.32, 626.84, 613.68, 603.34, 617.48, 633.64])
     counts = np.array([])
     for angle in angles:
         counts = np.append(counts, getData(angle))
-
     rates = counts/times
     sig_rates = np.sqrt(counts)/times
     normed_rates = rates/rates[9]
