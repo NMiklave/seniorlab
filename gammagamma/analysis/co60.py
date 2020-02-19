@@ -1,8 +1,13 @@
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from scipy.integrate import quad
 from scipy.optimize import curve_fit
+
+"""
+Ideas:
+    Calc mean and sig of each histogram, plot +/- 3 sig range, see if summing that removes BG
+    Cry
+"""
 
 # Fix title text to match TeX
 mpl.rcParams['mathtext.fontset'] = 'stix'
@@ -17,7 +22,7 @@ def getData(theta):             # Load data from file, using the angle tag in fi
 
     bg = sum(data.T[1])/len(bins)
 
-    plt.plot(*data[200:800].T)                 # If you want to view the gaussian fits
+    plt.plot(*data[400:590].T)                 # If you want to view the gaussian fits
     plt.axhline(y=bg, c='r')
     plt.show()
 
@@ -33,12 +38,13 @@ def legendre(x, a0, a1, a2, a3, a4):        # Legendre polynomial fit
     return func
 
 
-def fit_legendre(x, y, yerr):               # Find the polynomial fit parameters and plot them
+def fit_legendre(x, y, yerr):               # Find the polynomial fit parameters .102and plot them
     inits = [1, 0, 0.1, 0, 0.009]
     params, covar = curve_fit(legendre, np.cos(np.pi*x/180), y, sigma=yerr, p0=inits)   # Legendre actually is cos(x)
     domain = np.linspace(0, 140, 200)                                                   # Range for plotting
     plt.plot(domain, legendre(np.cos(np.pi*domain/180), *params), 'r--',                # Plot fit over range
              label='a0={0:2.4f}\na1={1:2.4f}\na2={0:2.4f}\na3={1:2.4f}\na4={2:2.4f}'.format(*params))
+    plt.plot(domain, legendre(np.cos(np.pi*domain/180), params[0], 0, 0.102, 0, 0.0091), 'b:', label='Theory Curve')
     return
 
 
