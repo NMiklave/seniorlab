@@ -37,11 +37,11 @@ def getData(theta):             # Load data from file, using the angle tag in fi
     print(fit[-1]*len(bins))
     print(sum(data.T[1]))
 
-  #  plt.plot(*data[350:590].T)                 # If you want to view the gaussian fits
-  #  plt.plot(data.T[0], gaussian(data.T[0], *fit))
-  #  plt.show()
+#    plt.plot(*data.T)#350:590].T)                 # If you want to view the gaussian fits
+#    plt.plot(data.T[0], gaussian(data.T[0], *fit))
+#    plt.show()
 
-    return sum(data.T[1])-fit[-1]*len(bins)
+    return sum(data.T[1])#-fit[-1]*len(bins)
 
 
 def legendre(x, a0, a1, a2, a3, a4):        # Legendre polynomial fit
@@ -49,7 +49,7 @@ def legendre(x, a0, a1, a2, a3, a4):        # Legendre polynomial fit
     p2 = .5*(3*x**2-1)
     p3 = .5*(5*x**3-3*x)
     p4 = .125*(35*x**4-30*x**2+3)
-    func = a0*(1+a1*p1+a2*p2+a3*p3+a4*p4)
+    func = a0*(1+a1*p1+a2*p2++a3*p3+a4*p4)
     return func
 
 
@@ -64,16 +64,15 @@ def fit_legendre(x, y, yerr):               # Find the polynomial fit parameters
 
 
 def main():
-    angles = np.arange(0, 140, 10)
-    times = np.array([660.16, 634.00, 607.32, 608.84, 614.70, 647.02, 616.00,
-                      708.92, 642.32, 626.84, 613.68, 603.34, 617.48, 633.64])
+    angles = np.array([0,20,40,60,80,90,100,120,130])
+    times = np.array([604.68,611.72,640.46,650.14,621.08,613.66,755.80,640.14,618.22])
     counts = np.array([])
     for angle in angles:
         counts = np.append(counts, getData(angle))
     rates = counts/times
     sig_rates = np.sqrt(counts)/times
-    normed_rates = rates/rates[9]
-    sig_normed_rates = [normed_rates[i]*np.sqrt((sig_rates[i]/rates[i])**2+(sig_rates[9]/rates[9])**2)
+    normed_rates = rates/rates[5]
+    sig_normed_rates = [normed_rates[i]*np.sqrt((sig_rates[i]/rates[i])**2+(sig_rates[5]/rates[5])**2)
                         for i in range(len(rates))]
 
     plt.errorbar(angles, normed_rates, yerr=sig_normed_rates, fmt='k.', ecolor='g', capsize=3, capthick=1)
