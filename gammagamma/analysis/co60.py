@@ -14,19 +14,34 @@ mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['font.family'] = 'STIXGeneral'
 
 
+def gaussian(x, a, m, s, o):    # Gaussian to fit to
+    gauss = a*np.exp(-.5*((x-m)/s)**2)+o
+    return gauss
+
+
+def gaussFit(x, y):             # Fit the gaussian and return parameters
+    inits = [max(y), np.argmax(y), 10, np.mean(y)]
+    params, covar = curve_fit(gaussian, x, y, p0=inits)
+    return params
+
+
 def getData(theta):             # Load data from file, using the angle tag in file name. Returns integrated counts
     fname = '../data/Co60_DetC_{0}_4.Spe'.format(str(theta).zfill(3))
     data = np.loadtxt(fname, skiprows=12, max_rows=2047)
     bins = np.arange(len(data))
     data = np.column_stack([bins, data])
 
-    bg = sum(data.T[1])/len(bins)
+    fit = gaussFit(*data.T)
 
-    plt.plot(*data[400:590].T)                 # If you want to view the gaussian fits
-    plt.axhline(y=bg, c='r')
-    plt.show()
+    print(fit)
+    print(fit[-1]*len(bins))
+    print(sum(data.T[1]))
 
-    return sum(data.T[1])
+  #  plt.plot(*data[350:590].T)                 # If you want to view the gaussian fits
+  #  plt.plot(data.T[0], gaussian(data.T[0], *fit))
+  #  plt.show()
+
+    return sum(data.T[1])-fit[-1]*len(bins)
 
 
 def legendre(x, a0, a1, a2, a3, a4):        # Legendre polynomial fit
