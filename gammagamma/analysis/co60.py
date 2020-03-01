@@ -41,7 +41,8 @@ def fit_legendre(x, y, yerr):               # Find the polynomial fit parameters
              label='a0={0:2.3f} $\pm${5:2.3f}\na1={1:2.3f} $\pm${6:2.3f}\na2={2:2.3f} $\pm${7:2.3f}\n'
                    'a3={3:2.3f} $\pm${8:2.3f}\na4={4:2.3f} $\pm${9:2.3f}'.format(*params, *errors))
     plt.plot(domain, legendre(np.cos(np.pi*domain/180), params[0], 0, 0.102, 0, 0.0091), 'b:', label='Theory Curve')
-    return params[1], params[3]
+    print('Opening angle corrected: ', params*(.9125**2))
+    return
 
 
 def main():
