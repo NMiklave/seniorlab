@@ -20,10 +20,6 @@ def getData(theta):             # Load data from file, using the angle tag in fi
     bins = np.arange(len(data))
     data = np.column_stack([bins, data])
 
-#    plt.plot(*data.T)#350:590].T)
-#    plt.plot(data.T[0], gaussian(data.T[0], *fit))
-#    plt.show()
-
     return sum(data.T[1])
 
 
@@ -32,18 +28,20 @@ def legendre(x, a0, a1, a2, a3, a4):        # Legendre polynomial fit
     p2 = .5*(3*x**2-1)
     p3 = .5*(5*x**3-3*x)
     p4 = .125*(35*x**4-30*x**2+3)
-    func = a0*(1+a1*p1+a2*p2++a3*p3+a4*p4)
+    func = a0*(1+a1*p1+a2*p2+a3*p3+a4*p4)
     return func
 
 
 def fit_legendre(x, y, yerr):               # Find the polynomial fit parameters .102and plot them
     inits = [1, 0, 0.1, 0, 0.009]
     params, covar = curve_fit(legendre, np.cos(np.pi*x/180), y, sigma=yerr, p0=inits)   # Legendre actually is cos(x)
+    errors = np.sqrt(np.diag(covar))
     domain = np.linspace(0, 140, 200)                                                   # Range for plotting
     plt.plot(domain, legendre(np.cos(np.pi*domain/180), *params), 'r--',                # Plot fit over range
-             label='a0={0:2.4f}\na1={1:2.4f}\na2={0:2.4f}\na3={1:2.4f}\na4={2:2.4f}'.format(*params))
+             label='a0={0:2.3f} $\pm${5:2.3f}\na1={1:2.3f} $\pm${6:2.3f}\na2={2:2.3f} $\pm${7:2.3f}\n'
+                   'a3={3:2.3f} $\pm${8:2.3f}\na4={4:2.3f} $\pm${9:2.3f}'.format(*params, *errors))
     plt.plot(domain, legendre(np.cos(np.pi*domain/180), params[0], 0, 0.102, 0, 0.0091), 'b:', label='Theory Curve')
-    return
+    return params[1], params[3]
 
 
 def main():
@@ -58,7 +56,9 @@ def main():
     sig_normed_rates = [normed_rates[i]*np.sqrt((sig_rates[i]/rates[i])**2+(sig_rates[5]/rates[5])**2)
                         for i in range(len(rates))]
 
-    plt.errorbar(angles, normed_rates, yerr=sig_normed_rates, fmt='k.', ecolor='g', capsize=3, capthick=1)
+    angles = np.array([0, 20, 47, 70, 90, 105, 139])
+
+    plt.errorbar(angles, normed_rates, xerr=3, yerr=sig_normed_rates, fmt='k.', ecolor='g', capsize=3, capthick=1)
     fit_legendre(angles, normed_rates, sig_normed_rates)
     plt.title("$^{60}$Co Coincidence Rate v. Detector Angle")
     plt.xlabel("Angle $(^\circ)$")
