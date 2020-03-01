@@ -37,11 +37,27 @@ def fit_legendre(x, y, yerr):               # Find the polynomial fit parameters
     params, covar = curve_fit(legendre, np.cos(np.pi*x/180), y, sigma=yerr, p0=inits)   # Legendre actually is cos(x)
     errors = np.sqrt(np.diag(covar))
     domain = np.linspace(0, 140, 200)                                                   # Range for plotting
-    plt.plot(domain, legendre(np.cos(np.pi*domain/180), *params), 'r--',                # Plot fit over range
-             label='a0={0:2.3f} $\pm${5:2.3f}\na1={1:2.3f} $\pm${6:2.3f}\na2={2:2.3f} $\pm${7:2.3f}\n'
-                   'a3={3:2.3f} $\pm${8:2.3f}\na4={4:2.3f} $\pm${9:2.3f}'.format(*params, *errors))
-    plt.plot(domain, legendre(np.cos(np.pi*domain/180), params[0], 0, 0.102, 0, 0.0091), 'b:', label='Theory Curve')
+    plt.plot(domain, legendre(np.cos(np.pi * domain / 180), *params), 'r--', label='Polynomial Fit')
+    #plt.plot(domain, legendre(np.cos(np.pi*domain/180), *params), 'r--',                # Plot fit over range
+    #         label='a0={0:2.3f} $\pm${5:2.3f}\na1={1:2.3f} $\pm${6:2.3f}\na2={2:2.3f} $\pm${7:2.3f}\n'
+    #               'a3={3:2.3f} $\pm${8:2.3f}\na4={4:2.3f} $\pm${9:2.3f}'.format(*params, *errors))
+    #plt.plot(domain, legendre(np.cos(np.pi*domain/180), params[0], 0, 0.102, 0, 0.0091), 'b:', label='Theory Curve')
+
+    chi2(x, y, params, yerr)
+
     print('Opening angle corrected: ', params*(.9125**2))
+    print('a0={0:2.3f} $\pm${5:2.3f}\na1={1:2.3f} $\pm${6:2.3f}\na2={2:2.3f} $\pm${7:2.3f}\n'
+          'a3={3:2.3f} $\pm${8:2.3f}\na4={4:2.3f} $\pm${9:2.3f}'.format(*params, *errors))
+    return
+
+
+def chi2(xdata, ydata, popt, sigma):
+    r = ydata - legendre(np.cos(np.pi*xdata/180), *popt)
+    print('Chisq data:')
+    print(r, sigma)
+    chisq = sum((r/sigma)**2)
+    print(chisq)
+    print()
     return
 
 
@@ -59,13 +75,14 @@ def main():
 
     angles = np.array([0, 20, 47, 70, 90, 105, 139])
 
-    plt.errorbar(angles, normed_rates, xerr=3, yerr=sig_normed_rates, fmt='k.', ecolor='g', capsize=3, capthick=1)
+    plt.errorbar(angles, normed_rates, xerr=3, yerr=sig_normed_rates, fmt='k.', ecolor='g', capsize=3, capthick=1,
+                 label='Normalized Rates')
     fit_legendre(angles, normed_rates, sig_normed_rates)
     plt.title("$^{60}$Co Coincidence Rate v. Detector Angle")
     plt.xlabel("Angle $(^\circ)$")
     plt.ylabel("Rate (counts/sec) Normalized by Rate at $90^\circ$")
     plt.legend()
-    #plt.savefig('../plots/co60.eps', format='eps')
+    #plt.savefig('../plots/co60_fit.eps', format='eps')
     plt.show()
     return
 
