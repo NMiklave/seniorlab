@@ -38,16 +38,17 @@ def fit_legendre(x, y, yerr):               # Find the polynomial fit parameters
     errors = np.sqrt(np.diag(covar))
     domain = np.linspace(0, 140, 200)                                                   # Range for plotting
     plt.plot(domain, legendre(np.cos(np.pi * domain / 180), *params), 'r--', label='Polynomial Fit')
-    #plt.plot(domain, legendre(np.cos(np.pi*domain/180), *params), 'r--',                # Plot fit over range
-    #         label='a0={0:2.3f} $\pm${5:2.3f}\na1={1:2.3f} $\pm${6:2.3f}\na2={2:2.3f} $\pm${7:2.3f}\n'
-    #               'a3={3:2.3f} $\pm${8:2.3f}\na4={4:2.3f} $\pm${9:2.3f}'.format(*params, *errors))
-    #plt.plot(domain, legendre(np.cos(np.pi*domain/180), params[0], 0, 0.102, 0, 0.0091), 'b:', label='Theory Curve')
+    plt.plot(domain, legendre(np.cos(np.pi * domain / 180),
+                              params[0], params[1], params[2]/(.9125**2), params[3], params[4]/(.974**2)),
+             'k--', label='Angular Smearing Corrected Fit')
+    plt.plot(domain, legendre(np.cos(np.pi*domain/180), params[0], 0, 0.102, 0, 0.0091), 'b:', label='Theory Curve')
 
-    chi2(x, y, params, yerr)
+    #chi2(x, y, params, yerr)
 
-    print('Opening angle corrected: ', params*(.9125**2))
+    print('Opening angle corrected: ', params*(.9125*.974))
     print('a0={0:2.3f} $\pm${5:2.3f}\na1={1:2.3f} $\pm${6:2.3f}\na2={2:2.3f} $\pm${7:2.3f}\n'
           'a3={3:2.3f} $\pm${8:2.3f}\na4={4:2.3f} $\pm${9:2.3f}'.format(*params, *errors))
+    print('Fixed a2 and a4: ', params[2]/(.9125**2), params[4]/(.974**2), ' err ', errors[2]/(.9125**2), errors[4]/(.974**2))
     return
 
 
