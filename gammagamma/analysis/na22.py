@@ -24,10 +24,13 @@ def getDataPoint(fname):
 
 def plot(angle, rate, error):
   fig, ax = plt.subplots()
-  ax.errorbar(angle, rate, yerr=error, fmt='k.', ecolor='g', capsize=3, capthick=1)
+  ax.errorbar(angle, rate, xerr=3, yerr=error, fmt='k.', ecolor='g', capsize=3, capthick=1, label='Na22 Data')
   ax.set_title("$^{22}$Na Coincidence Rate v. Detector Angle")
   ax.set_xlabel("Angle $(^\circ)$")
   ax.set_ylabel("Rate (counts/sec)")
+  plt.axvline(x=23.9, label='Detector Angular Half-Width', c='C0', linestyle='--')
+  plt.xlim(0, 100)
+  plt.legend()
   plt.savefig("../plots/na22.eps", format='eps')
   plt.show()
   return
@@ -52,7 +55,7 @@ def main():
     rates.append(mean/time)
     errors.append(stddev/time)
     index += 1
-#  plot(angles, rates, errors)
+  plot(angles, rates, errors)
 #  printData(liveTimes, means, rates, errors)
 
 

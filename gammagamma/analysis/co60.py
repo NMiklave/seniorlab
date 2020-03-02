@@ -3,12 +3,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
-"""
-Ideas:
-    Calc mean and sig of each histogram, plot +/- 3 sig range, see if summing that removes BG
-    Cry
-"""
-
 # Fix title text to match TeX
 mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['font.family'] = 'STIXGeneral'
@@ -70,6 +64,7 @@ def main():
         counts = np.append(counts, getData(angle))
     rates = counts/times
     sig_rates = np.sqrt(counts)/times
+    print(rates)
     normed_rates = rates/rates[5]
     sig_normed_rates = [normed_rates[i]*np.sqrt((sig_rates[i]/rates[i])**2+(sig_rates[5]/rates[5])**2)
                         for i in range(len(rates))]
