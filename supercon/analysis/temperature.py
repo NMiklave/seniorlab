@@ -72,11 +72,10 @@ def Ic_function(E, T, R):
 
 
 linear_data = loadData_temp(86)
-max_index = np.argmax(linear_data[0])   
+max_index = np.argmax(linear_data[0])
 R_n = linear_data[1][max_index]/linear_data[0][max_index]
-#for i in range(len(resistances)):
- #   plotData(loadData_temp(resistances[i]), i, R_n)
-  #  plt.show()
+plotData(loadData_temp(resistances[5]), 5, R_n)
+plt.savefig('../figures/iv_curve_5k.eps')
 
 plt.plot(T_range, Ic_function(empirical_curve(T_range, params)*1.76*8.6e-5*params, T_range, R_n)*1000, label='Theoretical Zero Point Current')
 plt.plot(temps[1:], Ic_function(energy_gaps[1:], temps[1:], R_n)*1000, 'rx', label='Measured Zero Point Current')
