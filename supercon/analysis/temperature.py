@@ -16,8 +16,8 @@ def loadData_temp(omega):
 def plotData(data, i, R):
     fig, ax = plt.subplots(1, 1, figsize=(8, 4))
 
-    ax.plot(data[0]/10, data[1]/10, 'rx')
-    ax.plot([min(data[0]), max(data[0])], [R*min(data[0]), R*max(data[0])], 'k--')
+    ax.plot(data[0]/10, data[1]/10, 'rx', label='Sampled IV Curve')
+    ax.plot([min(data[0]), max(data[0])], [R*min(data[0]), R*max(data[0])], 'k--', label='Hot Junction Resistance')
     ax.set_xlabel('Voltage [V]')
     ax.set_ylabel('Current [V]')
     ax.set_title('Niobium Junction IV Curve at {} K'.format(str(temps[i])))
