@@ -72,15 +72,18 @@ def Ic_function(E, T, R):
 
 
 linear_data = loadData_temp(86)
-max_index = np.argmax(linear_data[0])
+max_index = np.argmax(linear_data[0])   
 R_n = linear_data[1][max_index]/linear_data[0][max_index]
 #for i in range(len(resistances)):
  #   plotData(loadData_temp(resistances[i]), i, R_n)
   #  plt.show()
 
-plt.plot(T_range, Ic_function(empirical_curve(T_range, params)*1.76*8.6e-5*params, T_range, R_n)*1000)
+plt.plot(T_range, Ic_function(empirical_curve(T_range, params)*1.76*8.6e-5*params, T_range, R_n)*1000, label='Theoretical Zero Point Current')
 plt.plot(temps[1:], Ic_function(energy_gaps[1:], temps[1:], R_n)*1000, 'rx', label='Measured Zero Point Current')
 plt.title('Zero Voltage Current as a Function of Junction Temperature')
 plt.xlabel('Temperature [K]')
 plt.ylabel('Zero Voltage Current [mA]')
-plt.show()
+plt.ylim([0, .065])
+plt.xlim([2, 10])
+plt.legend()
+plt.savefig('../figures/zero_voltage_current.eps')
